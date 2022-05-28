@@ -1,7 +1,13 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ar_make_up_sample/pages/face_detection_page.dart';
 
-void main() {
+late List<CameraDescription> _cameras;
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  _cameras = await availableCameras();
   runApp(const MyApp());
 }
 
@@ -15,7 +21,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const FaceDetectionPage(),
+      home: FaceDetectionPage(
+        camera: _cameras.firstWhere(
+          (element) => element.lensDirection == CameraLensDirection.front,
+        ),
+      ),
     );
   }
 }
