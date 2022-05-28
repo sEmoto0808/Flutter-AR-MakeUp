@@ -14,6 +14,8 @@ class FaceDetectionPage extends StatefulWidget {
 class _FaceDetectionPageState extends State<FaceDetectionPage> {
   late final CameraController _controller;
 
+  var isImageStreamStarted = false;
+
   @override
   void initState() {
     _controller = CameraController(widget.camera, ResolutionPreset.max);
@@ -58,9 +60,31 @@ class _FaceDetectionPageState extends State<FaceDetectionPage> {
           ? CameraPreview(_controller)
           : Container(),
       floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.stop),
-        onPressed: () {},
+        onPressed: isImageStreamStarted ? _stop : _start,
+        child: isImageStreamStarted
+            ? const Icon(Icons.stop)
+            : const Icon(Icons.start),
       ),
     );
+  }
+
+  /// https://www.techaas.net/post/flutter-mlkit-realtime/
+
+  void _start() {
+    _controller.startImageStream(_processImage);
+    setState(() {
+      isImageStreamStarted = true;
+    });
+  }
+
+  void _stop() {
+    _controller.stopImageStream();
+    setState(() {
+      isImageStreamStarted = false;
+    });
+  }
+
+  void _processImage(CameraImage image) async {
+    print('CameraImage: $image');
   }
 }
