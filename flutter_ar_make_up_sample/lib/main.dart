@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ar_make_up_sample/pages/face_detection_page.dart';
+import 'package:flutter_ar_make_up_sample/sample/face_detector_view.dart';
 
 late List<CameraDescription> _cameras;
 
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: FaceDetectionPage(
+      home: FaceDetectorView(
         camera: _cameras.firstWhere(
           (element) => element.lensDirection == CameraLensDirection.front,
         ),
