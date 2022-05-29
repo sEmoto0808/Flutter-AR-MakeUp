@@ -29,6 +29,9 @@ dependencies:
   # https://zenn.dev/mamushi/articles/flutter_camera
   path: ^1.8.1
 
+  # https://pub.dev/packages/google_mlkit_face_detection
+  google_mlkit_face_detection: ^0.3.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
