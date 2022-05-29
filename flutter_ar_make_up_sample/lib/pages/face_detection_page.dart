@@ -3,8 +3,11 @@ import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_ar_make_up_sample/sample/camera_view.dart';
 import 'package:flutter_ar_make_up_sample/utils/camera_helper.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
+
+import '../sample/painters/face_detector_painter.dart';
 
 /// カメラを起動して顔検出する画面
 class FaceDetectionPage extends StatefulWidget {
@@ -22,6 +25,7 @@ class _FaceDetectionPageState extends State<FaceDetectionPage> {
   /// 顔検出
   late final FaceDetector _faceDetector;
   var isImageStreamStarted = false;
+  CustomPaint? _customPaint;
 
   @override
   void initState() {
@@ -31,6 +35,7 @@ class _FaceDetectionPageState extends State<FaceDetectionPage> {
         if (!mounted) {
           return;
         }
+        _start();
         setState(() {});
       },
     ).catchError(
@@ -73,13 +78,26 @@ class _FaceDetectionPageState extends State<FaceDetectionPage> {
         title: const Text('Face Detection'),
       ),
       body: _controller.value.isInitialized
-          ? CameraPreview(_controller)
+          // ? Stack(children: [
+          //     CameraPreview(_controller),
+          //     if (_customPaint != null) _customPaint!,
+          //   ])
+          ? CameraView(
+              camera: widget.camera,
+              title: "",
+              customPaint: _customPaint,
+              onImage: (inputImage) {
+                _processImage(inputImage);
+              },
+            )
           : Container(),
       floatingActionButton: FloatingActionButton(
-        onPressed: isImageStreamStarted ? _stop : _start,
-        child: isImageStreamStarted
-            ? const Icon(Icons.stop)
-            : const Icon(Icons.start),
+        // onPressed: isImageStreamSt/rted ? _stop : _start,
+        onPressed: _stop,
+        child: const Icon(Icons.stop),
+        // child: isImageStreamStarted
+        //     ? const Icon(Icons.stop)
+        //     : const Icon(Icons.start),
       ),
     );
   }
@@ -87,10 +105,7 @@ class _FaceDetectionPageState extends State<FaceDetectionPage> {
   /// https://www.techaas.net/post/flutter-mlkit-realtime/
 
   void _start() {
-    _controller.startImageStream(_processImage);
-    setState(() {
-      isImageStreamStarted = true;
-    });
+    // _controller.startImageStream(_processImage);
   }
 
   void _stop() {
@@ -100,18 +115,49 @@ class _FaceDetectionPageState extends State<FaceDetectionPage> {
     });
   }
 
-  void _processImage(CameraImage image) async {
+  Future<void> _processImage(InputImage inputImage) async {
+    // convert CameraImage -> Uint8List
+    // final imageBytes = concatenatePlanes(image.planes);
+
+    // final imageSize = Size(image.width.toDouble(), image.height.toDouble());
+    //
+    // final imageRotation = rotationIntToImageRotation(widget.camera.sensorOrientation);
+    //
+    // final inputImageFormat =
+    //     InputImageFormatValue.fromRawValue(image.format.raw) ??
+    //         InputImageFormat.nv21;
+
     // print('CameraImage: $image');
     // final numBytes = image.planes.fold<int>(0, (count, plane) => count += plane.bytes.length);
-    final inputImage = InputImage.fromBytes(
-      bytes: concatenatePlanes(image.planes),
-      inputImageData: buildImageData(
-        image,
-        rotationIntToImageRotation(0)!,
-      ),
-    );
+    // final inputImage = InputImage.fromBytes(
+    //   bytes: imageBytes,
+    //   inputImageData: buildImageData(
+    //     image,
+    //     rotationIntToImageRotation(0),
+    //   ),
+    // );
+
+    if (isImageStreamStarted) return;
+    isImageStreamStarted = true;
+    // setState(() {});
 
     final faces = await _faceDetector.processImage(inputImage);
+    if (inputImage.inputImageData?.size != null &&
+        inputImage.inputImageData?.imageRotation != null) {
+      final painter = FaceDetectorPainter(
+          faces,
+          inputImage.inputImageData!.size,
+          inputImage.inputImageData!.imageRotation);
+      _customPaint = CustomPaint(painter: painter);
+    } else {
+      // TODO: set _customPaint to draw boundingRect on top of image
+      _customPaint = null;
+    }
+
+    isImageStreamStarted = false;
+    if (mounted) {
+      setState(() {});
+    }
 
     // for (var face in faces) {
     //   final Rect boundingBox = face.boundingBox;

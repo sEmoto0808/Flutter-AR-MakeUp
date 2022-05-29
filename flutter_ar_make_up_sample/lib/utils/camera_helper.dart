@@ -13,8 +13,8 @@ Uint8List concatenatePlanes(List<Plane> planes) {
   return allBytes.done().buffer.asUint8List();
 }
 
-InputImageRotation? rotationIntToImageRotation(int rotation) {
-  return InputImageRotationValue.fromRawValue(rotation);
+InputImageRotation rotationIntToImageRotation(int rotation) {
+  return InputImageRotationValue.fromRawValue(rotation) ?? InputImageRotation.rotation0deg;
 }
 
 InputImageData buildImageData(

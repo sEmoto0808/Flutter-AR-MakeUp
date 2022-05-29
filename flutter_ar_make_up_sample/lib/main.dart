@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: FaceDetectorView(
+      home: FaceDetectionPage(
         camera: _cameras.firstWhere(
           (element) => element.lensDirection == CameraLensDirection.front,
         ),
