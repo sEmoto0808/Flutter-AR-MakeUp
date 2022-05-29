@@ -1,5 +1,10 @@
+import 'dart:math';
+import 'dart:typed_data';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_ar_make_up_sample/utils/camera_helper.dart';
+import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 
 /// カメラを起動して顔検出する画面
 class FaceDetectionPage extends StatefulWidget {
@@ -14,6 +19,8 @@ class FaceDetectionPage extends StatefulWidget {
 class _FaceDetectionPageState extends State<FaceDetectionPage> {
   late final CameraController _controller;
 
+  /// 顔検出
+  late final FaceDetector _faceDetector;
   var isImageStreamStarted = false;
 
   @override
@@ -41,12 +48,21 @@ class _FaceDetectionPageState extends State<FaceDetectionPage> {
       },
     );
 
+    final faceDetectorOptions = FaceDetectorOptions(
+      enableLandmarks: true,
+      enableTracking: true,
+      enableClassification: true,
+      enableContours: true,
+    );
+    _faceDetector = FaceDetector(options: faceDetectorOptions);
+
     super.initState();
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _faceDetector.close();
     super.dispose();
   }
 
@@ -85,6 +101,41 @@ class _FaceDetectionPageState extends State<FaceDetectionPage> {
   }
 
   void _processImage(CameraImage image) async {
-    print('CameraImage: $image');
+    // print('CameraImage: $image');
+    // final numBytes = image.planes.fold<int>(0, (count, plane) => count += plane.bytes.length);
+    final inputImage = InputImage.fromBytes(
+      bytes: concatenatePlanes(image.planes),
+      inputImageData: buildImageData(
+        image,
+        rotationIntToImageRotation(0)!,
+      ),
+    );
+
+    final faces = await _faceDetector.processImage(inputImage);
+
+    // for (var face in faces) {
+    //   final Rect boundingBox = face.boundingBox;
+    //
+    //   final double? rotY = face.headEulerAngleY; // Head is rotated to the right rotY degrees
+    //   final double? rotZ = face.headEulerAngleZ; // Head is tilted sideways rotZ degrees
+    //
+    //   // If landmark detection was enabled with FaceDetectorOptions (mouth, ears,
+    //   // eyes, cheeks, and nose available):
+    //   final FaceLandmark? leftEar = face.landmarks[FaceLandmarkType.leftEar];
+    //   if (leftEar != null) {
+    //     final Point<int> leftEarPos = leftEar.position;
+    //     print('leftEarPos: $leftEarPos');
+    //   }
+    //
+    //   // If classification was enabled with FaceDetectorOptions:
+    //   if (face.smilingProbability != null) {
+    //     final double? smileProb = face.smilingProbability;
+    //   }
+    //
+    //   // If face tracking was enabled with FaceDetectorOptions:
+    //   if (face.trackingId != null) {
+    //     final int id = face.trackingId!;
+    //   }
+    // }
   }
 }
