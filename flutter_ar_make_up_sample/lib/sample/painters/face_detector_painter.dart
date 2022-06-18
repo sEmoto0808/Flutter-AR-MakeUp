@@ -20,6 +20,7 @@ class FaceDetectorPainter extends CustomPainter {
       ..color = Colors.red;
 
     for (final Face face in faces) {
+      // 顔毎の四角い枠
       canvas.drawRect(
         Rect.fromLTRB(
           translateX(face.boundingBox.left, rotation, size, absoluteImageSize),
@@ -48,6 +49,82 @@ class FaceDetectorPainter extends CustomPainter {
         }
       }
 
+      void paintFilledUpperLip() {
+        // 上唇のtop輪郭
+        final upperLipTopContour = face.contours[FaceContourType.upperLipTop];
+        // 上唇のbottom輪郭
+        final upperLipBottomContour =
+            face.contours[FaceContourType.upperLipBottom];
+
+        if (upperLipTopContour?.points != null &&
+            upperLipBottomContour?.points != null) {
+          final upperLipTopPath = upperLipTopContour?.points ?? [];
+          final upperLipBottomPath = upperLipBottomContour?.points ?? [];
+          final upperLipPath = upperLipTopPath + upperLipBottomPath;
+
+          final path = Path();
+          path.moveTo(
+            translateX(upperLipPath[0].x.toDouble(), rotation, size,
+                absoluteImageSize),
+            translateX(upperLipPath[0].y.toDouble(), rotation, size,
+                absoluteImageSize),
+          );
+
+          for (var i = 1; i < upperLipPath.length; i++) {
+            path.lineTo(
+              translateX(upperLipPath[i].x.toDouble(), rotation, size,
+                  absoluteImageSize),
+              translateX(upperLipPath[i].y.toDouble(), rotation, size,
+                  absoluteImageSize),
+            );
+          }
+
+          path.close();
+
+          final filledPaint = Paint()..color = Colors.blue;
+
+          canvas.drawPath(path, filledPaint);
+        }
+      }
+
+      void paintFilledLowerLip() {
+        // 下唇のtop輪郭
+        final lowerLipTopContour = face.contours[FaceContourType.lowerLipTop];
+        // 下唇のbottom輪郭
+        final lowerLipBottomContour =
+            face.contours[FaceContourType.lowerLipBottom];
+
+        if (lowerLipTopContour?.points != null &&
+            lowerLipBottomContour?.points != null) {
+          final lowerLipTopPath = lowerLipTopContour?.points ?? [];
+          final lowerLipBottomPath = lowerLipBottomContour?.points ?? [];
+          final lowerLipPath = lowerLipTopPath + lowerLipBottomPath;
+
+          final path = Path();
+          path.moveTo(
+            translateX(lowerLipPath[0].x.toDouble(), rotation, size,
+                absoluteImageSize),
+            translateX(lowerLipPath[0].y.toDouble(), rotation, size,
+                absoluteImageSize),
+          );
+
+          for (var i = 1; i < lowerLipPath.length; i++) {
+            path.lineTo(
+              translateX(lowerLipPath[i].x.toDouble(), rotation, size,
+                  absoluteImageSize),
+              translateX(lowerLipPath[i].y.toDouble(), rotation, size,
+                  absoluteImageSize),
+            );
+          }
+
+          path.close();
+
+          final filledPaint = Paint()..color = Colors.green;
+
+          canvas.drawPath(path, filledPaint);
+        }
+      }
+
       paintContour(FaceContourType.face);
       // paintContour(FaceContourType.leftEyebrowTop);
       // paintContour(FaceContourType.leftEyebrowBottom);
@@ -63,6 +140,9 @@ class FaceDetectorPainter extends CustomPainter {
       // paintContour(FaceContourType.noseBottom);
       // paintContour(FaceContourType.leftCheek);
       // paintContour(FaceContourType.rightCheek);
+
+      paintFilledUpperLip();
+      paintFilledLowerLip();
     }
   }
 
