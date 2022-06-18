@@ -66,7 +66,7 @@ class FaceDetectorPainter extends CustomPainter {
           path.moveTo(
             translateX(upperLipPath[0].x.toDouble(), rotation, size,
                 absoluteImageSize),
-            translateX(upperLipPath[0].y.toDouble(), rotation, size,
+            translateY(upperLipPath[0].y.toDouble(), rotation, size,
                 absoluteImageSize),
           );
 
@@ -74,7 +74,7 @@ class FaceDetectorPainter extends CustomPainter {
             path.lineTo(
               translateX(upperLipPath[i].x.toDouble(), rotation, size,
                   absoluteImageSize),
-              translateX(upperLipPath[i].y.toDouble(), rotation, size,
+              translateY(upperLipPath[i].y.toDouble(), rotation, size,
                   absoluteImageSize),
             );
           }
@@ -104,7 +104,7 @@ class FaceDetectorPainter extends CustomPainter {
           path.moveTo(
             translateX(lowerLipPath[0].x.toDouble(), rotation, size,
                 absoluteImageSize),
-            translateX(lowerLipPath[0].y.toDouble(), rotation, size,
+            translateY(lowerLipPath[0].y.toDouble(), rotation, size,
                 absoluteImageSize),
           );
 
@@ -112,7 +112,7 @@ class FaceDetectorPainter extends CustomPainter {
             path.lineTo(
               translateX(lowerLipPath[i].x.toDouble(), rotation, size,
                   absoluteImageSize),
-              translateX(lowerLipPath[i].y.toDouble(), rotation, size,
+              translateY(lowerLipPath[i].y.toDouble(), rotation, size,
                   absoluteImageSize),
             );
           }
