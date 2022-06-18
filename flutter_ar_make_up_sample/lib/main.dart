@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_ar_make_up_sample/pages/circle_paint_page.dart';
 import 'package:flutter_ar_make_up_sample/pages/face_detection_page.dart';
 import 'package:flutter_ar_make_up_sample/sample/face_detector_view.dart';
 
@@ -22,11 +23,12 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: FaceDetectionPage(
-        camera: _cameras.firstWhere(
-          (element) => element.lensDirection == CameraLensDirection.front,
-        ),
-      ),
+      home: CirclePaintPage(),
+      // home: FaceDetectionPage(
+      //   camera: _cameras.firstWhere(
+      //     (element) => element.lensDirection == CameraLensDirection.front,
+      //   ),
+      // ),
     );
   }
 }
