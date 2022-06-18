@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ar_make_up_sample/sample/painters/practice/circle_painter.dart';
+import 'package:flutter_ar_make_up_sample/sample/painters/practice/triangle_painter.dart';
 
 /// CustomPainterを自作して円を描画する
 class CirclePaintPage extends StatelessWidget {
@@ -9,7 +10,7 @@ class CirclePaintPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: CustomPaint(
-        painter: CirclePainter(),
+        painter: TrianglePainter(),
         child: Container(
           height: 500,
         ),
